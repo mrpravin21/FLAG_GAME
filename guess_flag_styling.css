@@ -1,0 +1,388 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+h1 {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+button {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #1f6391;
+}
+
+#scoreBoard {
+    background: white;
+    max-width: 350px;
+    margin: 20px auto;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+}
+
+#gameArea {
+    margin-top: 30px;
+    background: white;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+img#flagImage {
+    width: 250px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 7px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #2980b9;
+}
+
+#message {
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #c0392b;
+}
+
+#restartBtn {
+    background-color: #e74c3c;
+}
+
+#restartBtn:hover {
+    background-color: #c0392b;
+}
+
+#playBtn {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+}
+
+#playBtn:hover {
+    background-color: #1f6391;
+}
+
+#playBtn.hidden {
+    display: none;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+h1 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 36px;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#scoreBoard {
+    background: white;
+    max-width: 350px;
+    margin: 20px auto;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    color: #34495e;
+    font-weight: 500;
+}
+
+#scoreBoard span {
+    font-weight: bold;
+    color: #2980b9;
+}
+
+#gameArea {
+    margin-top: 30px;
+    background: white;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    color: #34495e;
+}
+
+#gameArea p {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+img#flagImage {
+    width: 250px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 7px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #2980b9;
+}
+
+button {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #1f6391;
+}
+
+#playBtn.hidden {
+    display: none;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #c0392b;
+}
+
+#restartBtn {
+    background-color: #e74c3c;
+}
+
+#restartBtn:hover {
+    background-color: #c0392b;
+}
+
+#optionsArea {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.optionBtn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.optionBtn:hover {
+    background-color: #2c80b4;
+}
+#optionsArea {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.optionBtn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.optionBtn:hover {
+    background-color: #2c80b4;
+}
+
+#optionsArea {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.optionBtn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+.optionBtn:hover {
+    background-color: #2c80b4;
+    transform: translateY(-3px);
+}
+
+.optionBtn.correct {
+    background-color: #2ecc71 !important;
+}
+
+.optionBtn.wrong {
+    background-color: #e74c3c !important;
+}
+#message {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #c0392b;
+}
+
+#restartBtn {
+    background-color: #e74c3c;
+    margin-top: 15px;
+}
+
+#restartBtn:hover {
+    background-color: #c0392b;
+}
+#message {
+    margin-top: 40vh;  /* vertically center roughly */
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#restartBtn {
+    display: block;     /* block to center below message */
+    margin: 20px auto 0 auto;  /* center horizontally, margin top */
+    background-color: #3498db;  /* same blue as other buttons */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#restartBtn:hover {
+    background-color: #2c80b4;
+}
+#playBtn {
+  position: absolute;       /* Position relative to viewport */
+  top: 50%;                 /* Center vertically */
+  left: 50%;                /* Center horizontally */
+  transform: translate(-50%, -50%);  /* Offset by half its size to center exactly */
+  padding: 10px 10px;       /* Make it bigger */
+  font-size: 15px;          /* Bigger font */
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#playBtn:hover {
+  background-color: #2c80b4;
+}
+
+
+
+#playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 30px;
+  font-size: 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 1000; /* Ensure it stays on top */
+}
+
+#playBtn.hidden {
+  display: none !important; /* or visibility: hidden if you want space kept */
+}
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 20px;
+}

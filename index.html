@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Guess the Flag</title>
+<link rel="stylesheet" href="guess_flag_styling.css">
+</head>
+<body>
+
+<h1>Guess the Flag!</h1>
+<button id="playBtn" onclick="startGame()">Play</button>
+
+<div id="scoreBoard" style="display:none;">
+    <p>Current Score: <span id="currentScore">0</span></p>
+    <p>Highest Score: <span id="highScore">0</span></p>
+</div>
+
+<div id="gameArea" style="display:none;">
+    <p>Which country's flag is this?</p>
+    <img id="flagImage" src="" alt="Flag">
+    <br><br>
+   <div id="optionsArea">
+        <button class="optionBtn" onclick="checkAnswer(this)"></button>
+        <button class="optionBtn" onclick="checkAnswer(this)"></button>
+        <button class="optionBtn" onclick="checkAnswer(this)"></button>
+        <button class="optionBtn" onclick="checkAnswer(this)"></button>
+    </div>
+   
+</div>
+ <p id="message"></p>
+    <button id="restartBtn" style="display:none;" onclick="restartGame()">Restart</button>
+
+<audio id="correctSound" src="correct.wav" preload="auto"></audio>
+<audio id="wrongSound" src="incorrect.wav" preload="auto"></audio>
+
+
+<script>
+let countries = [];
+let currentCountry = null;
+let score = 0;
+let highScore = 0;
+
+function updateScore() {
+    document.getElementById('currentScore').textContent = score;
+}
+
+function loadHighScore() {
+    const storedScore = localStorage.getItem('highScore');
+    if (storedScore) {
+        highScore = parseInt(storedScore);
+    }
+    document.getElementById('highScore').textContent = highScore;
+}
+
+function updateHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+    }
+    document.getElementById('highScore').textContent = highScore;
+}
+
+function startGame() {
+    fetch('countries.json')
+        .then(response => response.json())
+        .then(data => {
+            countries = data;
+            score = 0;
+            updateScore();
+            loadHighScore();
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('scoreBoard').style.display = 'block';
+            document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').style.display = 'none';
+            document.getElementById('playBtn').classList.add('hidden');
+            showRandomFlag();
+        })
+        .catch(err => console.error("Failed to load country list", err));
+}
+
+function showRandomFlag() {
+    const randomIndex = Math.floor(Math.random() * countries.length);
+    currentCountry = countries[randomIndex];
+    document.getElementById('flagImage').src = `https://flagcdn.com/w320/${currentCountry.code}.png`;
+
+    // Prepare options
+    const options = [currentCountry.name];
+    while (options.length < 4) {
+        const rand = countries[Math.floor(Math.random() * countries.length)].name;
+        if (!options.includes(rand)) {
+            options.push(rand);
+        }
+    }
+
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+
+    // Set button texts and enable buttons
+    const buttons = document.getElementsByClassName('optionBtn');
+    for (let i = 0; i < 4; i++) {
+        buttons[i].textContent = options[i];
+        buttons[i].disabled = false;
+    }
+
+    document.getElementById('message').textContent = '';
+    document.getElementById('restartBtn').style.display = 'none';
+}
+
+function checkAnswer(button) {
+    const selected = button.textContent;
+    const buttons = document.getElementsByClassName('optionBtn');
+    const correctSound = document.getElementById('correctSound');
+    const wrongSound = document.getElementById('wrongSound');
+    
+    if (selected === currentCountry.name) {
+
+         correctSound.currentTime = 0; // rewind sound
+        correctSound.play();
+
+        button.classList.add('correct');
+        
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        setTimeout(() => {
+            button.classList.remove('correct');
+            score++;
+            updateScore();
+            showRandomFlag();
+        }, 800);
+        
+    } else {
+
+        wrongSound.currentTime = 0; // rewind sound
+        wrongSound.play();
+        button.classList.add('wrong');
+        
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        setTimeout(() => {
+    button.classList.remove('wrong');
+
+    document.getElementById('gameArea').style.display = 'none';
+    document.getElementById('scoreBoard').style.display = 'none';
+
+    const messageEl = document.getElementById('message');
+    console.log("Score at game over: ", score);
+     messageEl.innerHTML = 
+        '<span style="font-size: 22px; font-weight: bold;">Score: ' + score + '</span><br><br>' +
+        '<span style="color: red; font-size: 40px; font-weight: bold;">Game Over!</span><br>' +
+        '<span style="font-size: 20px;">Correct answer was: ' + currentCountry.name + '</span>';
+
+    messageEl.style.display = 'block';  // Make sure message is visible
+
+    document.getElementById('restartBtn').style.display = 'inline-block';
+
+    updateHighScore();
+}, 800);
+
+    }
+}
+
+
+
+function restartGame() {
+    score = 0;
+    updateScore();
+
+    // Hide the game over message and restart button
+    document.getElementById('message').textContent = '';
+    document.getElementById('message').style.display = 'none';
+    document.getElementById('restartBtn').style.display = 'none';
+
+    // Show the game area and scoreboard again
+    document.getElementById('gameArea').style.display = 'block';
+    document.getElementById('scoreBoard').style.display = 'block';
+
+    // Enable the option buttons
+    const buttons = document.getElementsByClassName('optionBtn');
+    for (let btn of buttons) {
+        btn.disabled = false;
+    }
+
+    // Start with a new flag
+    showRandomFlag();
+}
+
+</script>
+
+
+</body>
+
+</html>
