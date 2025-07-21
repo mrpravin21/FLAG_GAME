@@ -32,12 +32,20 @@
 <audio id="correctSound" src="correct.wav" preload="auto"></audio>
 <audio id="wrongSound" src="incorrect.wav" preload="auto"></audio>
 
+<button onclick="fetchLeaderboard()">Show Leaderboard</button>
+<div id="leaderboard"></div>
 
 <script>
 let countries = [];
 let currentCountry = null;
 let score = 0;
 let highScore = 0;
+let rollNumber = null;
+
+function getRollFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('roll');
+}
 
 function updateScore() {
     document.getElementById('currentScore').textContent = score;
@@ -60,6 +68,13 @@ function updateHighScore() {
 }
 
 function startGame() {
+    rollNumber = getRollFromURL();
+
+    if (!rollNumber) {
+        alert("Roll number missing from URL. Please start from the C client.");
+        return;
+    }
+
     fetch('countries.json')
         .then(response => response.json())
         .then(data => {
@@ -82,7 +97,6 @@ function showRandomFlag() {
     currentCountry = countries[randomIndex];
     document.getElementById('flagImage').src = `https://flagcdn.com/w320/${currentCountry.code}.png`;
 
-    // Prepare options
     const options = [currentCountry.name];
     while (options.length < 4) {
         const rand = countries[Math.floor(Math.random() * countries.length)].name;
@@ -90,11 +104,8 @@ function showRandomFlag() {
             options.push(rand);
         }
     }
-
-    // Shuffle options
     options.sort(() => Math.random() - 0.5);
 
-    // Set button texts and enable buttons
     const buttons = document.getElementsByClassName('optionBtn');
     for (let i = 0; i < 4; i++) {
         buttons[i].textContent = options[i];
@@ -110,14 +121,12 @@ function checkAnswer(button) {
     const buttons = document.getElementsByClassName('optionBtn');
     const correctSound = document.getElementById('correctSound');
     const wrongSound = document.getElementById('wrongSound');
-    
+
     if (selected === currentCountry.name) {
-
-         correctSound.currentTime = 0; // rewind sound
+        correctSound.currentTime = 0;
         correctSound.play();
-
         button.classList.add('correct');
-        
+
         for (let btn of buttons) {
             btn.disabled = true;
         }
@@ -128,66 +137,94 @@ function checkAnswer(button) {
             updateScore();
             showRandomFlag();
         }, 800);
-        
     } else {
-
-        wrongSound.currentTime = 0; // rewind sound
+        wrongSound.currentTime = 0;
         wrongSound.play();
         button.classList.add('wrong');
-        
+
         for (let btn of buttons) {
             btn.disabled = true;
         }
 
         setTimeout(() => {
-    button.classList.remove('wrong');
+            button.classList.remove('wrong');
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('scoreBoard').style.display = 'none';
 
-    document.getElementById('gameArea').style.display = 'none';
-    document.getElementById('scoreBoard').style.display = 'none';
+            const messageEl = document.getElementById('message');
+            messageEl.innerHTML =
+                '<span style="font-size: 22px; font-weight: bold;">Score: ' + score + '</span><br><br>' +
+                '<span style="color: red; font-size: 40px; font-weight: bold;">Game Over!</span><br>' +
+                '<span style="font-size: 20px;">Correct answer was: ' + currentCountry.name + '</span>';
 
-    const messageEl = document.getElementById('message');
-    console.log("Score at game over: ", score);
-     messageEl.innerHTML = 
-        '<span style="font-size: 22px; font-weight: bold;">Score: ' + score + '</span><br><br>' +
-        '<span style="color: red; font-size: 40px; font-weight: bold;">Game Over!</span><br>' +
-        '<span style="font-size: 20px;">Correct answer was: ' + currentCountry.name + '</span>';
+            messageEl.style.display = 'block';
+            document.getElementById('restartBtn').style.display = 'inline-block';
 
-    messageEl.style.display = 'block';  // Make sure message is visible
-
-    document.getElementById('restartBtn').style.display = 'inline-block';
-
-    updateHighScore();
-}, 800);
-
+            updateHighScore();
+            sendScoreToServer();
+        }, 800);
     }
 }
 
+function sendScoreToServer() {
+    if (!rollNumber) {
+        console.error("No roll number. Score not sent.");
+        return;
+    }
 
+    const url = `http://localhost:8080/submit_score?roll=${encodeURIComponent(rollNumber)}&score=${score}`;
+    fetch(url)
+        .then(res => res.ok ? console.log("Score sent to server") : console.error("Failed to send score"))
+        .catch(err => console.error("Network error sending score", err));
+}
 
 function restartGame() {
     score = 0;
     updateScore();
-
-    // Hide the game over message and restart button
     document.getElementById('message').textContent = '';
     document.getElementById('message').style.display = 'none';
     document.getElementById('restartBtn').style.display = 'none';
-
-    // Show the game area and scoreboard again
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('scoreBoard').style.display = 'block';
 
-    // Enable the option buttons
     const buttons = document.getElementsByClassName('optionBtn');
     for (let btn of buttons) {
         btn.disabled = false;
     }
-
-    // Start with a new flag
     showRandomFlag();
 }
 
+function fetchLeaderboard() {
+    fetch("http://localhost:8080/leaderboard")
+        .then(res => res.json())
+        .then(data => {
+            console.log("Leaderboard data received:", data);
+            let output = '<h2>Leaderboard</h2><ol>';
+            data.forEach(entry => {
+                output += `<li>${entry.roll}: ${entry.score}</li>`;
+            });
+            output += '</ol>';
+            document.getElementById('leaderboard').innerHTML = output;
+        })
+        .catch(err => {
+            console.error("Failed to load leaderboard", err);
+            document.getElementById('leaderboard').innerHTML =
+                "<p style='color:red;'>Failed to fetch leaderboard.</p>";
+        });
+}
+
+// Optional: preload rollNumber and leaderboard on load
+window.onload = () => {
+    rollNumber = getRollFromURL();
+    if (!rollNumber) {
+        alert("Roll number not found. Please launch the game from your C program.");
+    } else {
+        fetchLeaderboard(); // Preload leaderboard on page load
+    }
+};
 </script>
+
+
 
 
 </body>
