@@ -80,11 +80,31 @@ FLAG_GAME/
 
 ---
 
-## 🙋 Author
+## 🙋 Authors
+
+### 1. Team Leader ⭐
+
 
 - **Name**: Pravin Bhatta
 - **College Roll Number**: 211428
-- **Department**: IT Engineering
+- **Semester**: VII
+- **Course**: BE IT (Morning)
+
+---
+
+### 2. Team Member 1️⃣
+
+- **Name**: Rohan Khanal
+- **College Roll Number**: 211434
+- **Semester**: VII
+- **Course**: BE IT (Morning)
+
+---
+
+### 2. Team Member 2️⃣
+
+- **Name**: Kabir Thapa
+- **College Roll Number**: 211414
 - **Semester**: VII
 - **Course**: BE IT (Morning)
 
