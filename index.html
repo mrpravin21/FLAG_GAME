@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guess the Flag</title>
 <link rel="stylesheet" href="guess_flag_styling.css">
 </head>
@@ -11,7 +13,6 @@
 
 <div id="scoreBoard" style="display:none;">
     <p>Current Score: <span id="currentScore">0</span></p>
-    <p>Highest Score: <span id="highScore">0</span></p>
 </div>
 
 <div id="gameArea" style="display:none;">
@@ -24,23 +25,31 @@
         <button class="optionBtn" onclick="checkAnswer(this)"></button>
         <button class="optionBtn" onclick="checkAnswer(this)"></button>
     </div>
-   
 </div>
- <p id="message"></p>
-    <button id="restartBtn" style="display:none;" onclick="restartGame()">Restart</button>
+
+<p id="message"></p>
+<button id="restartBtn" style="display:none;" onclick="restartGame()">Restart</button>
 
 <audio id="correctSound" src="correct.wav" preload="auto"></audio>
 <audio id="wrongSound" src="incorrect.wav" preload="auto"></audio>
 
-<button onclick="fetchLeaderboard()">Show Leaderboard</button>
-<div id="leaderboard"></div>
+<button id="toggleLeaderboardBtn" onclick="toggleLeaderboard()" style="display: none;">Show Leaderboard</button>
+<div id="leaderboard" class="leaderboard-grid" style="display: none;">
+    <div class="leaderboard-header">
+        <div>Roll Number</div>
+        <div>Score</div>
+    </div>
+    <div id="leaderboardBody" class="leaderboard-body">
+    </div>
+</div>
+
 
 <script>
 let countries = [];
 let currentCountry = null;
 let score = 0;
-let highScore = 0;
 let rollNumber = null;
+let leaderboardVisible = false;
 
 function getRollFromURL() {
     const params = new URLSearchParams(window.location.search);
@@ -51,23 +60,11 @@ function updateScore() {
     document.getElementById('currentScore').textContent = score;
 }
 
-function loadHighScore() {
-    const storedScore = localStorage.getItem('highScore');
-    if (storedScore) {
-        highScore = parseInt(storedScore);
-    }
-    document.getElementById('highScore').textContent = highScore;
-}
 
-function updateHighScore() {
-    if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('highScore', highScore);
-    }
-    document.getElementById('highScore').textContent = highScore;
-}
 
 function startGame() {
+
+    
     rollNumber = getRollFromURL();
 
     if (!rollNumber) {
@@ -81,12 +78,13 @@ function startGame() {
             countries = data;
             score = 0;
             updateScore();
-            loadHighScore();
             document.getElementById('gameArea').style.display = 'block';
             document.getElementById('scoreBoard').style.display = 'block';
             document.getElementById('message').textContent = '';
             document.getElementById('restartBtn').style.display = 'none';
             document.getElementById('playBtn').classList.add('hidden');
+            document.getElementById('toggleLeaderboardBtn').style.display = 'none';
+
             showRandomFlag();
         })
         .catch(err => console.error("Failed to load country list", err));
@@ -159,8 +157,9 @@ function checkAnswer(button) {
 
             messageEl.style.display = 'block';
             document.getElementById('restartBtn').style.display = 'inline-block';
+            document.getElementById('toggleLeaderboardBtn').style.display = 'inline-block';
 
-            updateHighScore();
+
             sendScoreToServer();
         }, 800);
     }
@@ -186,6 +185,13 @@ function restartGame() {
     document.getElementById('restartBtn').style.display = 'none';
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('scoreBoard').style.display = 'block';
+    document.getElementById('toggleLeaderboardBtn').style.display = 'none';
+
+    const lb = document.getElementById('leaderboard');
+    const btn = document.getElementById('toggleLeaderboardBtn');
+    lb.style.display = 'none';
+    btn.textContent = 'Show Leaderboard';
+    leaderboardVisible = false;
 
     const buttons = document.getElementsByClassName('optionBtn');
     for (let btn of buttons) {
@@ -199,11 +205,41 @@ function fetchLeaderboard() {
         .then(res => res.json())
         .then(data => {
             console.log("Leaderboard data received:", data);
-            let output = '<h2>Leaderboard</h2><ol>';
-            data.forEach(entry => {
-                output += `<li>${entry.roll}: ${entry.score}</li>`;
+            data.sort((a, b) => b.score - a.score);
+
+            let output = `
+                <h2>Leaderboard</h2>
+                <div class="leaderboard-header">
+                    <div>Rank</div>
+                    <div>Roll Number</div>
+                    <div>Score</div>
+                </div>
+            `;
+
+            data.forEach((entry, index) => {
+                let highlightClass = "";
+                let emoji = "";
+
+                if (index === 0) {
+                    highlightClass = "gold";
+                    emoji = " 🥇";
+                } else if (index === 1) {
+                    highlightClass = "silver";
+                    emoji = " 🥈";
+                } else if (index === 2) {
+                    highlightClass = "bronze";
+                    emoji = " 🥉";
+                }
+
+                output += `
+                    <div class="leaderboard-row ${highlightClass}">
+                        <div>#${index + 1}${emoji}</div>
+                        <div>${entry.roll}</div>
+                        <div>${entry.score}</div>
+                    </div>
+                `;
             });
-            output += '</ol>';
+
             document.getElementById('leaderboard').innerHTML = output;
         })
         .catch(err => {
@@ -213,20 +249,36 @@ function fetchLeaderboard() {
         });
 }
 
-// Optional: preload rollNumber and leaderboard on load
+
+
+
+
+function toggleLeaderboard() {
+    const lb = document.getElementById('leaderboard');
+    const btn = document.getElementById('toggleLeaderboardBtn');
+
+    if (leaderboardVisible) {
+        lb.style.display = 'none';
+        btn.textContent = 'Show Leaderboard';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    } else {
+        fetchLeaderboard();
+        lb.style.display = 'block';
+        btn.textContent = 'Hide Leaderboard';
+        lb.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    leaderboardVisible = !leaderboardVisible;
+}
+
 window.onload = () => {
     rollNumber = getRollFromURL();
     if (!rollNumber) {
         alert("Roll number not found. Please launch the game from your C program.");
-    } else {
-        fetchLeaderboard(); // Preload leaderboard on page load
     }
 };
 </script>
 
-
-
-
 </body>
-
 </html>
