@@ -13,6 +13,11 @@
 
 <div id="scoreBoard" style="display:none;">
     <p>Current Score: <span id="currentScore">0</span></p>
+    <!-- ❤️ Lives Display -->
+    <div id="livesDisplay" style="display: none; font-size: 15px; color: red;">
+    ❤️❤️❤️
+    </div>
+
 </div>
 
 <div id="gameArea" style="display:none;">
@@ -51,6 +56,11 @@ let score = 0;
 let rollNumber = null;
 let leaderboardVisible = false;
 
+let lives = 3;
+
+
+
+
 function getRollFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('roll');
@@ -60,7 +70,10 @@ function updateScore() {
     document.getElementById('currentScore').textContent = score;
 }
 
-
+function updateHearts() {
+    const livesDisplay = document.getElementById('livesDisplay');
+    livesDisplay.textContent = "❤️".repeat(lives);
+}
 
 function startGame() {
 
@@ -77,6 +90,9 @@ function startGame() {
         .then(data => {
             countries = data;
             score = 0;
+            lives = 3;
+            updateHearts();
+            document.getElementById('livesDisplay').style.display = 'block';
             updateScore();
             document.getElementById('gameArea').style.display = 'block';
             document.getElementById('scoreBoard').style.display = 'block';
@@ -145,23 +161,31 @@ function checkAnswer(button) {
         }
 
         setTimeout(() => {
-            button.classList.remove('wrong');
-            document.getElementById('gameArea').style.display = 'none';
-            document.getElementById('scoreBoard').style.display = 'none';
+    button.classList.remove('wrong');
+    lives--;
+    updateHearts();
 
-            const messageEl = document.getElementById('message');
-            messageEl.innerHTML =
-                '<span style="font-size: 22px; font-weight: bold;">Score: ' + score + '</span><br><br>' +
-                '<span style="color: red; font-size: 40px; font-weight: bold;">Game Over!</span><br>' +
-                '<span style="font-size: 20px;">Correct answer was: ' + currentCountry.name + '</span>';
+    if (lives === 0) {
+        document.getElementById('gameArea').style.display = 'none';
+        document.getElementById('scoreBoard').style.display = 'none';
+        document.getElementById('livesDisplay').style.display = 'none';
 
-            messageEl.style.display = 'block';
-            document.getElementById('restartBtn').style.display = 'inline-block';
-            document.getElementById('toggleLeaderboardBtn').style.display = 'inline-block';
+        const messageEl = document.getElementById('message');
+        messageEl.innerHTML =
+            '<span style="font-size: 22px; font-weight: bold;">Score: ' + score + '</span><br><br>' +
+            '<span style="color: red; font-size: 40px; font-weight: bold;">Game Over!</span><br>' +
+            '<span style="font-size: 20px;">Correct answer was: ' + currentCountry.name + '</span>';
 
+        messageEl.style.display = 'block';
+        document.getElementById('restartBtn').style.display = 'inline-block';
+        document.getElementById('toggleLeaderboardBtn').style.display = 'inline-block';
 
-            sendScoreToServer();
-        }, 800);
+        sendScoreToServer();
+    } else {
+        showRandomFlag();
+    }
+}, 800);
+
     }
 }
 
@@ -179,6 +203,10 @@ function sendScoreToServer() {
 
 function restartGame() {
     score = 0;
+    lives = 3;
+    updateHearts();
+    document.getElementById('livesDisplay').style.display = 'block';
+
     updateScore();
     document.getElementById('message').textContent = '';
     document.getElementById('message').style.display = 'none';
