@@ -17,6 +17,7 @@ The server keeps track of each player using their roll number and maintains a re
 - 🥇 Rank highlighting (Gold, Silver, Bronze)
 - 🔊 Sound effects for correct/wrong answers
 - 🎨 Animations and improved UI using CSS Flexbox/Grid
+- ❤️❤️❤️ Each Player has 3 Lives
 
 ---
 
